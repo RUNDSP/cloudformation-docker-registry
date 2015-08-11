@@ -182,19 +182,15 @@
             "files" : {
               "/opt/docker-registry/config.yaml" : {
                 "content" : { "Fn::Join" : ["\n", [
-                  "prod:",
-                  "    standalone: true",
-                  "    loglevel: warn",
-                  "    storage: s3",
-                  "    s3_access_key: {{access_key}}",
-                  "    s3_secret_key: {{secret_key}}",
-                  "    s3_region: {{s3_region}}",
-                  "    s3_bucket: {{s3_bucket}}",
-                  "    boto_bucket: {{s3_bucket}}",
-                  "    storage_path: /srv/docker",
-                  "    secret_key: {{magic_string}}",
-                  "    search_backend: sqlalchemy",
-                  "    sqlalchemy_index_database: sqlite:////tmp/docker-registry.db",
+                  "version: 0.1",
+                  "storage:",
+                  "    s3:",
+                  "        region: {{s3_region}}",
+                  "        bucket: {{s3_bucket}}",
+                  "        accesskey: {{access_key}}",
+                  "        secretkey: {{secret_key}}",
+                  "http:",
+                  "    addr: :5000",
                   ""
                 ]]},
                 "context" : {
@@ -295,8 +291,7 @@
           "runit-service create docker-registry docker run --rm",
           "   -p 5000:5000",
           "   -v /opt/docker-registry:/registry-conf",
-          "   -e DOCKER_REGISTRY_CONFIG=/registry-conf/config.yaml",
-          "   -e SETTINGS_FLAVOR=prod",
+          "   -e REGISTRY_CONFIGURATION_PATH=/registry-conf/config.yaml",
           "   ", { "Ref": "DockerImage" }, "|| error_exit 'Failed to launch Docker container'\n",
           "runit-service enable docker-registry\n",
 
